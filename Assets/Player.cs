@@ -4,19 +4,22 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] int playerNumber;
-
+    // MOVEMENT //
     [SerializeField] Rigidbody2D rb;
     [SerializeField] float speed;
     [SerializeField] int maxDistance;
     private Vector2 startPosition;
     float h;
 
+    // JUMP //
     [SerializeField] float jumpForce;
     bool isJumping;
     bool isGrounded;
 
-
+    // INPUT PER GIOCATORE //
+    [SerializeField] int playerNumber;
+    string orizzontale;
+    string salto;
 
 
     private void Start()
@@ -24,40 +27,18 @@ public class Player : MonoBehaviour
         if (rb == null) rb = GetComponent<Rigidbody2D>();
 
         startPosition = rb.position;
-    }
 
+        orizzontale = ($"P{playerNumber}Horizontal");
+        salto = ($"P{playerNumber}Jump");
+    }
 
 
     private void Update()
     {
-        if (playerNumber == 1)
-        {
-            h = Input.GetAxis("P1Horizontal");
+        h = Input.GetAxis(orizzontale);
 
-            if (Input.GetButtonDown("P1Jump") && isGrounded)
-            { isJumping = true; }
-        }
-        else if (playerNumber == 2)
-        {
-            h = Input.GetAxis("P2Horizontal");
-
-            if (Input.GetButtonDown("P2Jump") && isGrounded)
-            { isJumping = true; }
-        }
-        else
-        { Debug.LogError("IL NUMERO DEL PLAYER É ERRATO 1 o 2"); }
-    }
-
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.collider.CompareTag("Floor"))
-        { isGrounded = true; }
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.collider.CompareTag("Floor"))
-        { isGrounded = false; }
+        if (Input.GetButtonDown(salto) && isGrounded)
+        { isJumping = true; }
     }
 
 
@@ -77,6 +58,20 @@ public class Player : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             isJumping = false;
         }
+    }
+
+
+
+    // CAN JUMP? // ----------------------------------------------------------------------------------------------------------------------------------
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Floor"))
+        { isGrounded = true; }
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Floor"))
+        { isGrounded = false; }
     }
 }
 
